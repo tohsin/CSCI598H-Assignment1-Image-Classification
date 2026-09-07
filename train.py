@@ -14,16 +14,9 @@ from models import build_model
 
 
 RESULT_FIELDS = ["experiment_id", "model", "optimizer", "epoch", "epochs",
-                 "batch_size", "learning_rate", "num_layers", "seed", "train_loss",
+                 "batch_size", "learning_rate", "momentum", "num_layers",
+                 "seed", "train_loss",
                  "validation_accuracy", "epoch_time_seconds"]
-
-
-def softmax_cross_entropy(logits: torch.Tensor, labels: torch.Tensor) -> torch.Tensor:
-    """Return mean softmax cross-entropy without using F.cross_entropy."""
-    # TODO 1: Compute log probabilities using a numerically stable method.
-    # TODO 2: Select the log probability of each correct class.
-    # TODO 3: Return the mean negative log probability.
-    raise NotImplementedError
 
 
 def train_one_step(
@@ -37,6 +30,12 @@ def train_one_step(
     # update the parameters, and return the loss as a Python float.
     raise NotImplementedError
 
+def softmax_cross_entropy(logits: torch.Tensor, labels: torch.Tensor) -> torch.Tensor:
+    """Return mean softmax cross-entropy without using F.cross_entropy."""
+    # TODO 1: Compute log probabilities using a numerically stable method.
+    # TODO 2: Select the log probability of each correct class.
+    # TODO 3: Return the mean negative log probability.
+    raise NotImplementedError
 
 def compute_accuracy(logits: torch.Tensor, labels: torch.Tensor) -> float:
     """Return the fraction of correct predictions as a Python float."""
@@ -50,12 +49,19 @@ def evaluate(model, data_loader, device):
     raise NotImplementedError
 
 
-def build_optimizer(name, parameters, learning_rate):
+def build_optimizer(name, parameters, learning_rate, momentum=0.0):
+    # Check here for more optimizers: https://docs.pytorch.org/docs/2.14/optim.html
+    if not 0.0 <= momentum < 1.0:
+        raise ValueError("momentum must satisfy 0 <= momentum < 1")
     if name.lower() == "sgd":
-        return torch.optim.SGD(parameters, lr=learning_rate)
+        return torch.optim.SGD(parameters, lr=learning_rate, momentum=momentum)
+    if momentum != 0.0:
+        raise ValueError("momentum is only supported by the SGD optimizer")
     if name.lower() == "adam":
         return torch.optim.Adam(parameters, lr=learning_rate)
-    raise ValueError(f"Unknown optimizer {name!r}; choose sgd or adam.")
+    if name.lower() == "adamw":
+        return torch.optim.AdamW(parameters, lr=learning_rate)
+    raise ValueError(f"Unknown optimizer {name!r}; choose sgd, adam, or adamw.")
 
 
 def make_data_loaders(data_dir, batch_size, seed, max_train_samples=None,
@@ -90,7 +96,8 @@ def main():
     parser.add_argument("--epochs", type=int, default=10)
     parser.add_argument("--batch-size", type=int, default=128)
     parser.add_argument("--learning-rate", type=float, default=0.01)
-    parser.add_argument("--optimizer", choices=("sgd", "adam"), default="sgd")
+    parser.add_argument("--optimizer", choices=("sgd", "adam", "adamw"), default="sgd")
+    parser.add_argument("--momentum", type=float, default=0.0)
     parser.add_argument("--num-layers", type=int, choices=(2, 5))
     parser.add_argument("--seed", type=int, default=598)
     parser.add_argument("--output")
@@ -112,7 +119,9 @@ def main():
     if args.model in {"conv", "vit"} and args.num_layers is None:
         raise ValueError("--num-layers is required for conv and vit models")
     model = build_model(args.model, num_layers=args.num_layers).to(device)
-    optimizer = build_optimizer(args.optimizer, model.parameters(), args.learning_rate)
+    optimizer = build_optimizer(
+        args.optimizer, model.parameters(), args.learning_rate, args.momentum
+    )
     rows = []
 
     for epoch in range(1, args.epochs + 1):
@@ -133,6 +142,7 @@ def main():
         rows.append({"experiment_id": args.experiment_id, "model": args.model,
                      "optimizer": args.optimizer, "epoch": epoch, "epochs": args.epochs,
                      "batch_size": args.batch_size, "learning_rate": args.learning_rate,
+                     "momentum": args.momentum if args.optimizer == "sgd" else "",
                      "num_layers": args.num_layers if args.num_layers is not None else "",
                      "seed": args.seed, "train_loss": f"{mean_loss:.8f}",
                      "validation_accuracy": f"{validation_accuracy:.8f}",

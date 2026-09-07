@@ -10,3 +10,6 @@ Complete this file after running `run_experiments.py`.
 
 6. For CNN and ViT, how did increasing the number of layers from 2 to 5 affect
 accuracy, convergence, and training time?
+
+7. For CNN and ViT, compare plain SGD, SGD with momentum, Adam, and AdamW.
+What differences did you observe, and which optimizer would you select?

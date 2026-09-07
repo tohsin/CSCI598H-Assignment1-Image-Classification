@@ -53,6 +53,9 @@ class PublicSmokeTests(unittest.TestCase):
         parameter = nn.Parameter(torch.tensor([1.0]))
         self.assertIsInstance(build_optimizer("sgd", [parameter], 0.01), torch.optim.SGD)
         self.assertIsInstance(build_optimizer("adam", [parameter], 0.001), torch.optim.Adam)
+        sgd_momentum = build_optimizer("sgd", [parameter], 0.01, momentum=0.9)
+        self.assertEqual(sgd_momentum.param_groups[0]["momentum"], 0.9)
+        self.assertIsInstance(build_optimizer("adamw", [parameter], 0.001), torch.optim.AdamW)
 
 
 if __name__ == "__main__":

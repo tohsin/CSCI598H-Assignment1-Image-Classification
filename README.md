@@ -96,10 +96,13 @@ them when producing the final experiment results.
 
 `experiments.json` contains one linear baseline, one three-layer baseline, and
 one-variable-at-a-time comparisons for CNN and ViT. These comparisons vary
-epochs, batch size, learning rate, optimizer, and number of layers. For CNN,
+epochs, batch size, learning rate, optimizer, SGD momentum, and number of layers. For CNN,
 `num_layers` means convolutional layers; for ViT, it means Transformer encoder
 layers. The required values are 2 and 5. You may add experiments, but do not
 remove or rename the provided experiment IDs.
+
+The optimizer choices are `sgd`, `adam`, and `adamw`. SGD experiments use
+`momentum=0.0` or `momentum=0.9`; momentum does not apply to Adam or AdamW.
 
 ```bash
 python run_experiments.py --config experiments.json --output results.csv

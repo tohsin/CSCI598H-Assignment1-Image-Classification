@@ -10,7 +10,7 @@ from pathlib import Path
 
 
 FIELDS = ["experiment_id", "model", "optimizer", "epoch", "epochs",
-          "batch_size", "learning_rate", "num_layers", "seed", "train_loss",
+          "batch_size", "learning_rate", "momentum", "num_layers", "seed", "train_loss",
           "validation_accuracy", "epoch_time_seconds"]
 
 
@@ -37,6 +37,14 @@ def main():
                 raise ValueError(
                     f"{item['id']} must set num_layers to either 2 or 5"
                 )
+            if item["optimizer"] == "sgd" and item.get("momentum") not in {0.0, 0.9}:
+                raise ValueError(
+                    f"{item['id']} must set SGD momentum to 0.0 or 0.9"
+                )
+            if item["optimizer"] != "sgd" and "momentum" in item:
+                raise ValueError(
+                    f"{item['id']} must not set momentum for Adam or AdamW"
+                )
             result_path = Path(temp_dir) / f"result_{index}.csv"
             command = [sys.executable, "train.py", "--data-dir", args.data_dir,
                        "--experiment-id", str(item["id"]), "--model", str(item["model"]),
@@ -46,6 +54,8 @@ def main():
                        "--output", str(result_path)]
             if item.get("num_layers") is not None:
                 command += ["--num-layers", str(item["num_layers"])]
+            if item.get("momentum") is not None:
+                command += ["--momentum", str(item["momentum"])]
             if args.max_train_samples:
                 command += ["--max-train-samples", str(args.max_train_samples)]
             if args.max_validation_samples:
