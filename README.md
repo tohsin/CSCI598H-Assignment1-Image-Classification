@@ -72,22 +72,38 @@ model checkpoints are local artifacts and must not be committed.
 
 ## Required implementation
 
-Complete every `TODO` in:
+Complete these two tasks:
 
-- `models.py`: `LinearClassifier`, `ThreeLayerClassifier`, `ConvClassifier`,
-  and `VisionTransformerClassifier`.
-- `train.py`: stable cross-entropy, one training step, accuracy, and `evaluate`.
+1. **Learn how to build and train a classification model.** Run
+   `linear_vs_cnn_tutorial.ipynb` from beginning to end. The notebook walks
+   through loading CIFAR-10, defining a classifier, implementing the loss,
+   training the model, evaluating it, and plotting results across epochs.
+
+2. **Implement and compare linear layers, CNNs, and ViTs.** Complete every
+   `TODO` in `models.py` and `train.py`, run the configurations in
+   `experiments.json`, and answer the questions in `analysis.md` using the
+   generated `results.csv`. In `models.py`, implement `LinearClassifier`,
+   `ThreeLayerClassifier`, `ConvClassifier`, and
+   `VisionTransformerClassifier`. In `train.py`, implement stable
+   cross-entropy, one training step, accuracy, and `evaluate`.
 
 Follow the exact CNN architecture documented in `models.py`. All classifiers
 must return logits, not softmax probabilities. Do not use
 `torch.nn.functional.cross_entropy` in `softmax_cross_entropy`.
 
-## Run one model
+## Install dependencies
 
-Install dependencies and run a short check:
+Install the required packages:
 
 ```bash
 python -m pip install -r requirements.txt
+```
+
+## Check one model
+
+Run a short check for any model using one of these commands:
+
+```bash
 python train.py --model linear --epochs 1 --max-train-samples 2000 --max-validation-samples 500
 python train.py --model three_layer --optimizer adam --learning-rate 0.001 --epochs 1 --max-train-samples 2000 --max-validation-samples 500
 python train.py --model conv --num-layers 2 --optimizer adam --learning-rate 0.001 --epochs 1 --max-train-samples 2000 --max-validation-samples 500

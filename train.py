@@ -30,12 +30,12 @@ def train_one_step(
     # update the parameters, and return the loss as a Python float.
     raise NotImplementedError
 
-def softmax_cross_entropy(logits: torch.Tensor, labels: torch.Tensor) -> torch.Tensor:
-    """Return mean softmax cross-entropy without using F.cross_entropy."""
-    # TODO 1: Compute log probabilities using a numerically stable method.
-    # TODO 2: Select the log probability of each correct class.
-    # TODO 3: Return the mean negative log probability.
+
+def evaluate(model, data_loader, device):
+    # TODO: Evaluate all batches without gradients. Weight each batch accuracy
+    # by its number of examples and return the overall accuracy.
     raise NotImplementedError
+
 
 def compute_accuracy(logits: torch.Tensor, labels: torch.Tensor) -> float:
     """Return the fraction of correct predictions as a Python float."""
@@ -43,9 +43,11 @@ def compute_accuracy(logits: torch.Tensor, labels: torch.Tensor) -> float:
     raise NotImplementedError
 
 
-def evaluate(model, data_loader, device):
-    # TODO: Evaluate all batches without gradients. Weight each batch accuracy
-    # by its number of examples and return the overall accuracy.
+def softmax_cross_entropy(logits: torch.Tensor, labels: torch.Tensor) -> torch.Tensor:
+    """Return mean softmax cross-entropy without using F.cross_entropy."""
+    # TODO 1: Compute log probabilities using a numerically stable method.
+    # TODO 2: Select the log probability of each correct class.
+    # TODO 3: Return the mean negative log probability.
     raise NotImplementedError
 
 
@@ -64,25 +66,27 @@ def build_optimizer(name, parameters, learning_rate, momentum=0.0):
     raise ValueError(f"Unknown optimizer {name!r}; choose sgd, adam, or adamw.")
 
 
-def make_data_loaders(data_dir, batch_size, seed, max_train_samples=None,
-                      max_validation_samples=None):
-    transform = transforms.Compose([
-        transforms.ToTensor(),
-        transforms.Normalize((0.4914, 0.4822, 0.4465),
-                             (0.2470, 0.2435, 0.2616)),
-    ])
-    train_set = datasets.CIFAR10(data_dir, train=True, download=True, transform=transform)
-    validation_set = datasets.CIFAR10(data_dir, train=False, download=True, transform=transform)
-    if max_train_samples is not None:
-        train_set = Subset(train_set, range(min(max_train_samples, len(train_set))))
-    if max_validation_samples is not None:
-        validation_set = Subset(validation_set, range(min(max_validation_samples, len(validation_set))))
-    generator = torch.Generator().manual_seed(seed)
-    return (
-        DataLoader(train_set, batch_size=batch_size, shuffle=True, generator=generator),
-        DataLoader(validation_set, batch_size=batch_size, shuffle=False),
-    )
+def build_lr_scheduler(name, optimizer, epochs, step_size=5, gamma=0.1):
+    """Build an optional learning-rate scheduler."""
+    name = name.lower()
+    if name == "none":
+        return None
+    if name == "step":
+        return torch.optim.lr_scheduler.StepLR(
+            optimizer, step_size=step_size, gamma=gamma
+        )
+    if name == "cosine":
+        return torch.optim.lr_scheduler.CosineAnnealingLR(
+            optimizer, T_max=epochs
+        )
+    raise ValueError(f"Unknown LR schedule {name!r}; choose none, step, or cosine.")
 
+
+def make_data_loaders():
+    # TODO 1: load data train / valid sets
+    # TODO 2: data augmentation /normalization
+    # TODO 3: return dataloaders
+    raise NotImplementedError
 
 def main():
     parser = argparse.ArgumentParser()
@@ -96,6 +100,14 @@ def main():
     parser.add_argument("--epochs", type=int, default=10)
     parser.add_argument("--batch-size", type=int, default=128)
     parser.add_argument("--learning-rate", type=float, default=0.01)
+    parser.add_argument(
+        "--lr-schedule",
+        choices=("none", "step", "cosine"),
+        default="none",
+        help="Learning-rate schedule to apply after each epoch.",
+    )
+    parser.add_argument("--lr-step-size", type=int, default=5)
+    parser.add_argument("--lr-gamma", type=float, default=0.1)
     parser.add_argument("--optimizer", choices=("sgd", "adam", "adamw"), default="sgd")
     parser.add_argument("--momentum", type=float, default=0.0)
     parser.add_argument("--num-layers", type=int, choices=(2, 5))
@@ -107,20 +119,29 @@ def main():
 
     if args.epochs < 1 or args.batch_size < 1 or args.learning_rate <= 0:
         raise ValueError("epochs, batch size, and learning rate must be positive")
+    if args.lr_step_size < 1:
+        raise ValueError("LR step size must be positive")
+    if not 0.0 < args.lr_gamma <= 1.0:
+        raise ValueError("LR gamma must satisfy 0 < gamma <= 1")
 
     torch.manual_seed(args.seed)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-    train_loader, validation_loader = make_data_loaders(
-        args.data_dir, args.batch_size, args.seed,
-        args.max_train_samples, args.max_validation_samples,
-    )
+    # TODO: get dataloaders
+    train_loader, validation_loader = make_data_loaders()
 
     if args.model in {"conv", "vit"} and args.num_layers is None:
         raise ValueError("--num-layers is required for conv and vit models")
     model = build_model(args.model, num_layers=args.num_layers).to(device)
     optimizer = build_optimizer(
         args.optimizer, model.parameters(), args.learning_rate, args.momentum
+    )
+    lr_scheduler = build_lr_scheduler(
+        args.lr_schedule,
+        optimizer,
+        epochs=args.epochs,
+        step_size=args.lr_step_size,
+        gamma=args.lr_gamma,
     )
     rows = []
 
@@ -139,6 +160,7 @@ def main():
         validation_accuracy = evaluate(model, validation_loader, device)
         mean_loss = total_loss / total_examples
         elapsed = time.perf_counter() - start
+        current_learning_rate = optimizer.param_groups[0]["lr"]
         rows.append({"experiment_id": args.experiment_id, "model": args.model,
                      "optimizer": args.optimizer, "epoch": epoch, "epochs": args.epochs,
                      "batch_size": args.batch_size, "learning_rate": args.learning_rate,
@@ -149,8 +171,11 @@ def main():
                      "epoch_time_seconds": f"{elapsed:.4f}"})
         print(
             f"Epoch {epoch:02d} | "
-            f"loss={mean_loss:.4f} | validation_accuracy={validation_accuracy:.2%}"
+            f"loss={mean_loss:.4f} | validation_accuracy={validation_accuracy:.2%} | "
+            f"learning_rate={current_learning_rate:.6g}"
         )
+        if lr_scheduler is not None:
+            lr_scheduler.step()
 
     if args.output:
         output_path = Path(args.output)
