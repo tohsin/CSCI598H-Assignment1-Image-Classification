@@ -56,7 +56,11 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--data-dir", default="./data")
     parser.add_argument("--experiment-id", default="single_run")
-    parser.add_argument("--model", choices=("linear", "three_layer", "conv"), default="linear")
+    parser.add_argument(
+        "--model",
+        choices=("linear", "three_layer", "conv", "vit"),
+        default="linear",
+    )
     parser.add_argument("--epochs", type=int, default=10)
     parser.add_argument("--batch-size", type=int, default=128)
     parser.add_argument("--learning-rate", type=float, default=0.01)

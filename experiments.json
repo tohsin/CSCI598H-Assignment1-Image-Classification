@@ -6,6 +6,7 @@
     {"id":"linear_lr_001","model":"linear","epochs":10,"batch_size":128,"learning_rate":0.001,"optimizer":"sgd","seed":598},
     {"id":"linear_adam","model":"linear","epochs":10,"batch_size":128,"learning_rate":0.01,"optimizer":"adam","seed":598},
     {"id":"three_layer","model":"three_layer","epochs":10,"batch_size":128,"learning_rate":0.001,"optimizer":"adam","seed":598},
-    {"id":"conv","model":"conv","epochs":10,"batch_size":128,"learning_rate":0.001,"optimizer":"adam","seed":598}
+    {"id":"conv","model":"conv","epochs":10,"batch_size":128,"learning_rate":0.001,"optimizer":"adam","seed":598},
+    {"id":"vit","model":"vit","epochs":10,"batch_size":128,"learning_rate":0.001,"optimizer":"adam","seed":598}
   ]
 }

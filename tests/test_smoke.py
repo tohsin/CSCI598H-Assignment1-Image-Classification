@@ -6,7 +6,13 @@ import torch
 from torch import nn
 
 from linear_classifier import compute_accuracy, softmax_cross_entropy
-from models import ConvClassifier, LinearClassifier, ThreeLayerClassifier, build_model
+from models import (
+    ConvClassifier,
+    LinearClassifier,
+    ThreeLayerClassifier,
+    VisionTransformerClassifier,
+    build_model,
+)
 from train import build_optimizer
 
 
@@ -16,6 +22,7 @@ class PublicSmokeTests(unittest.TestCase):
             (LinearClassifier(), (2, 3, 32, 32)),
             (ThreeLayerClassifier(), (2, 3, 32, 32)),
             (ConvClassifier(), (2, 3, 32, 32)),
+            (VisionTransformerClassifier(), (2, 3, 32, 32)),
         ]
         for model, shape in cases:
             with self.subTest(model=type(model).__name__):
@@ -38,6 +45,7 @@ class PublicSmokeTests(unittest.TestCase):
         self.assertIsInstance(build_model("linear"), LinearClassifier)
         self.assertIsInstance(build_model("three_layer"), ThreeLayerClassifier)
         self.assertIsInstance(build_model("conv"), ConvClassifier)
+        self.assertIsInstance(build_model("vit"), VisionTransformerClassifier)
 
     def test_optimizer_factory(self):
         parameter = nn.Parameter(torch.tensor([1.0]))

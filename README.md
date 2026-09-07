@@ -12,6 +12,7 @@ Implement and compare three PyTorch classifiers on CIFAR-10:
 1. A single linear layer.
 2. A three-layer fully connected network.
 3. A small convolutional neural network (CNN).
+4. A compact Vision Transformer (ViT) with two encoder layers.
 
 You will also compare epochs, batch size, learning rate, and optimizer. The
 experiment configuration and results use machine-readable files so Gradescope
@@ -23,7 +24,8 @@ Complete every `TODO` in:
 
 - `linear_classifier.py`: forward pass, stable cross-entropy, one training
   step, and accuracy.
-- `models.py`: `ThreeLayerClassifier` and `ConvClassifier`.
+- `models.py`: `ThreeLayerClassifier`, `ConvClassifier`, and
+  `VisionTransformerClassifier`.
 - `train.py`: `evaluate`.
 
 Follow the exact CNN architecture documented in `models.py`. All classifiers
@@ -39,6 +41,7 @@ python -m pip install -r requirements.txt
 python train.py --model linear --epochs 1 --max-train-samples 2000 --max-validation-samples 500
 python train.py --model three_layer --optimizer adam --learning-rate 0.001 --epochs 1 --max-train-samples 2000 --max-validation-samples 500
 python train.py --model conv --optimizer adam --learning-rate 0.001 --epochs 1 --max-train-samples 2000 --max-validation-samples 500
+python train.py --model vit --optimizer adam --learning-rate 0.001 --epochs 1 --max-train-samples 2000 --max-validation-samples 500
 ```
 
 The `--max-*-samples` flags are intended for quick local checks. Do not add
@@ -47,7 +50,7 @@ them when producing the final experiment results.
 ## Run the comparison
 
 `experiments.json` contains the required one-variable-at-a-time comparisons
-and the three-model comparison. You may add experiments, but do not remove or
+and the four-model comparison. You may add experiments, but do not remove or
 rename the provided experiment IDs.
 
 ```bash
