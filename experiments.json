@@ -1,12 +1,18 @@
 {
   "experiments": [
     {"id":"linear_baseline","model":"linear","epochs":10,"batch_size":128,"learning_rate":0.01,"optimizer":"sgd","seed":598},
-    {"id":"linear_epochs_5","model":"linear","epochs":5,"batch_size":128,"learning_rate":0.01,"optimizer":"sgd","seed":598},
-    {"id":"linear_batch_64","model":"linear","epochs":10,"batch_size":64,"learning_rate":0.01,"optimizer":"sgd","seed":598},
-    {"id":"linear_lr_001","model":"linear","epochs":10,"batch_size":128,"learning_rate":0.001,"optimizer":"sgd","seed":598},
-    {"id":"linear_adam","model":"linear","epochs":10,"batch_size":128,"learning_rate":0.01,"optimizer":"adam","seed":598},
-    {"id":"three_layer","model":"three_layer","epochs":10,"batch_size":128,"learning_rate":0.001,"optimizer":"adam","seed":598},
-    {"id":"conv","model":"conv","epochs":10,"batch_size":128,"learning_rate":0.001,"optimizer":"adam","seed":598},
-    {"id":"vit","model":"vit","epochs":10,"batch_size":128,"learning_rate":0.001,"optimizer":"adam","seed":598}
+    {"id":"three_layer_baseline","model":"three_layer","epochs":10,"batch_size":128,"learning_rate":0.001,"optimizer":"adam","seed":598},
+    {"id":"conv_baseline","model":"conv","num_layers":2,"epochs":10,"batch_size":128,"learning_rate":0.001,"optimizer":"adam","seed":598},
+    {"id":"conv_epochs_5","model":"conv","num_layers":2,"epochs":5,"batch_size":128,"learning_rate":0.001,"optimizer":"adam","seed":598},
+    {"id":"conv_batch_64","model":"conv","num_layers":2,"epochs":10,"batch_size":64,"learning_rate":0.001,"optimizer":"adam","seed":598},
+    {"id":"conv_lr_0001","model":"conv","num_layers":2,"epochs":10,"batch_size":128,"learning_rate":0.0001,"optimizer":"adam","seed":598},
+    {"id":"conv_sgd","model":"conv","num_layers":2,"epochs":10,"batch_size":128,"learning_rate":0.001,"optimizer":"sgd","seed":598},
+    {"id":"conv_layers_5","model":"conv","num_layers":5,"epochs":10,"batch_size":128,"learning_rate":0.001,"optimizer":"adam","seed":598},
+    {"id":"vit_baseline","model":"vit","num_layers":2,"epochs":10,"batch_size":128,"learning_rate":0.001,"optimizer":"adam","seed":598},
+    {"id":"vit_epochs_5","model":"vit","num_layers":2,"epochs":5,"batch_size":128,"learning_rate":0.001,"optimizer":"adam","seed":598},
+    {"id":"vit_batch_64","model":"vit","num_layers":2,"epochs":10,"batch_size":64,"learning_rate":0.001,"optimizer":"adam","seed":598},
+    {"id":"vit_lr_0001","model":"vit","num_layers":2,"epochs":10,"batch_size":128,"learning_rate":0.0001,"optimizer":"adam","seed":598},
+    {"id":"vit_sgd","model":"vit","num_layers":2,"epochs":10,"batch_size":128,"learning_rate":0.001,"optimizer":"sgd","seed":598},
+    {"id":"vit_layers_5","model":"vit","num_layers":5,"epochs":10,"batch_size":128,"learning_rate":0.001,"optimizer":"adam","seed":598}
   ]
 }

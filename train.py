@@ -14,7 +14,7 @@ from models import build_model
 
 
 RESULT_FIELDS = ["experiment_id", "model", "optimizer", "epoch", "epochs",
-                 "batch_size", "learning_rate", "seed", "train_loss",
+                 "batch_size", "learning_rate", "num_layers", "seed", "train_loss",
                  "validation_accuracy", "epoch_time_seconds"]
 
 
@@ -65,6 +65,7 @@ def main():
     parser.add_argument("--batch-size", type=int, default=128)
     parser.add_argument("--learning-rate", type=float, default=0.01)
     parser.add_argument("--optimizer", choices=("sgd", "adam"), default="sgd")
+    parser.add_argument("--num-layers", type=int, choices=(2, 5))
     parser.add_argument("--seed", type=int, default=598)
     parser.add_argument("--output")
     parser.add_argument("--max-train-samples", type=int)
@@ -82,7 +83,9 @@ def main():
         args.max_train_samples, args.max_validation_samples,
     )
 
-    model = build_model(args.model).to(device)
+    if args.model in {"conv", "vit"} and args.num_layers is None:
+        raise ValueError("--num-layers is required for conv and vit models")
+    model = build_model(args.model, num_layers=args.num_layers).to(device)
     optimizer = build_optimizer(args.optimizer, model.parameters(), args.learning_rate)
     rows = []
 
@@ -104,6 +107,7 @@ def main():
         rows.append({"experiment_id": args.experiment_id, "model": args.model,
                      "optimizer": args.optimizer, "epoch": epoch, "epochs": args.epochs,
                      "batch_size": args.batch_size, "learning_rate": args.learning_rate,
+                     "num_layers": args.num_layers if args.num_layers is not None else "",
                      "seed": args.seed, "train_loss": f"{mean_loss:.8f}",
                      "validation_accuracy": f"{validation_accuracy:.8f}",
                      "epoch_time_seconds": f"{elapsed:.4f}"})

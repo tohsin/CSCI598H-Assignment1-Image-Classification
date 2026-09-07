@@ -23,6 +23,8 @@ class PublicSmokeTests(unittest.TestCase):
             (ThreeLayerClassifier(), (2, 3, 32, 32)),
             (ConvClassifier(), (2, 3, 32, 32)),
             (VisionTransformerClassifier(), (2, 3, 32, 32)),
+            (ConvClassifier(num_layers=5), (2, 3, 32, 32)),
+            (VisionTransformerClassifier(num_layers=5), (2, 3, 32, 32)),
         ]
         for model, shape in cases:
             with self.subTest(model=type(model).__name__):
@@ -46,6 +48,7 @@ class PublicSmokeTests(unittest.TestCase):
         self.assertIsInstance(build_model("three_layer"), ThreeLayerClassifier)
         self.assertIsInstance(build_model("conv"), ConvClassifier)
         self.assertIsInstance(build_model("vit"), VisionTransformerClassifier)
+        self.assertEqual(build_model("conv", num_layers=5).num_layers, 5)
 
     def test_optimizer_factory(self):
         parameter = nn.Parameter(torch.tensor([1.0]))

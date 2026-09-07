@@ -25,12 +25,18 @@ class ThreeLayerClassifier(nn.Module):
 class ConvClassifier(nn.Module):
     """A small convolutional network for 32 x 32 RGB images."""
 
-    def __init__(self, num_classes=10):
+    def __init__(self, num_classes=10, num_layers=2):
         super().__init__()
-        # TODO: Build this architecture:
-        # Conv2d(3,32,3,padding=1), ReLU, MaxPool2d(2),
-        # Conv2d(32,64,3,padding=1), ReLU, MaxPool2d(2),
-        # Flatten, Linear(64*8*8,128), ReLU, Linear(128,num_classes).
+        if num_layers not in {2, 5}:
+            raise ValueError("ConvClassifier num_layers must be 2 or 5")
+        self.num_layers = num_layers
+        # TODO: Build num_layers convolutional blocks. Each block contains
+        # Conv2d(kernel_size=3, padding=1), ReLU, and MaxPool2d(2).
+        # Use output channels [32, 64] for the 2-layer model and
+        # [32, 64, 128, 128, 128] for the 5-layer model. After the blocks,
+        # flatten and use Linear(flattened_dim, 128), ReLU, and
+        # Linear(128, num_classes). For 32x32 inputs, flattened_dim is
+        # channels[-1] * (32 // 2**num_layers) ** 2.
         raise NotImplementedError
 
     def forward(self, images: torch.Tensor) -> torch.Tensor:
@@ -47,8 +53,8 @@ class VisionTransformerClassifier(nn.Module):
     - embed every patch into 128 dimensions;
     - prepend one learnable classification token;
     - add learnable positional embeddings;
-    - apply exactly two Transformer encoder layers, each with four attention
-      heads and a 256-dimensional feed-forward block;
+    - apply either two or five Transformer encoder layers, each with four
+      attention heads and a 256-dimensional feed-forward block;
     - classify the final classification-token representation.
     """
 
@@ -69,8 +75,8 @@ class VisionTransformerClassifier(nn.Module):
             raise ValueError("image_size must be divisible by patch_size")
         if embed_dim % num_heads != 0:
             raise ValueError("embed_dim must be divisible by num_heads")
-        if num_layers != 2:
-            raise ValueError("This assignment requires exactly two encoder layers")
+        if num_layers not in {2, 5}:
+            raise ValueError("VisionTransformerClassifier num_layers must be 2 or 5")
 
         self.image_size = image_size
         self.patch_size = patch_size
@@ -83,8 +89,8 @@ class VisionTransformerClassifier(nn.Module):
         #    embedding [1, num_patches + 1, embed_dim] parameters.
         # 3. Create nn.TransformerEncoderLayer with d_model=embed_dim,
         #    nhead=num_heads, dim_feedforward=mlp_dim, dropout=dropout, and
-        #    batch_first=True. Wrap it in nn.TransformerEncoder with exactly
-        #    num_layers=2.
+        #    batch_first=True. Wrap it in nn.TransformerEncoder with
+        #    num_layers encoder layers.
         # 4. Add a final LayerNorm and Linear(embed_dim, num_classes) head.
         raise NotImplementedError
 
@@ -92,12 +98,12 @@ class VisionTransformerClassifier(nn.Module):
         """Return logits with shape [batch_size, num_classes]."""
         # TODO: Check the input spatial size, patch-embed the images, flatten
         # the patch grid into a token sequence, prepend a copy of cls_token for
-        # each item, add positional embeddings, run the two-layer encoder, and
+        # each item, add positional embeddings, run the encoder, and
         # classify the normalized class token. Return logits, not probabilities.
         raise NotImplementedError
 
 
-def build_model(name: str, num_classes=10) -> nn.Module:
+def build_model(name: str, num_classes=10, num_layers=None) -> nn.Module:
     """Create one of the assignment's classifier architectures."""
     normalized = name.lower().replace("-", "_")
     if normalized == "linear":
@@ -105,9 +111,11 @@ def build_model(name: str, num_classes=10) -> nn.Module:
     if normalized in {"three_layer", "mlp"}:
         return ThreeLayerClassifier(num_classes=num_classes)
     if normalized in {"conv", "cnn"}:
-        return ConvClassifier(num_classes=num_classes)
+        return ConvClassifier(num_classes=num_classes, num_layers=num_layers or 2)
     if normalized in {"vit", "vision_transformer"}:
-        return VisionTransformerClassifier(num_classes=num_classes)
+        return VisionTransformerClassifier(
+            num_classes=num_classes, num_layers=num_layers or 2
+        )
     raise ValueError(
         f"Unknown model {name!r}; choose linear, three_layer, conv, or vit."
     )

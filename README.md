@@ -12,7 +12,7 @@ Implement and compare three PyTorch classifiers on CIFAR-10:
 1. A single linear layer.
 2. A three-layer fully connected network.
 3. A small convolutional neural network (CNN).
-4. A compact Vision Transformer (ViT) with two encoder layers.
+4. A compact Vision Transformer (ViT) with configurable encoder depth.
 
 You will also compare epochs, batch size, learning rate, and optimizer. The
 experiment configuration and results use machine-readable files so Gradescope
@@ -40,8 +40,8 @@ Install dependencies and run a short check:
 python -m pip install -r requirements.txt
 python train.py --model linear --epochs 1 --max-train-samples 2000 --max-validation-samples 500
 python train.py --model three_layer --optimizer adam --learning-rate 0.001 --epochs 1 --max-train-samples 2000 --max-validation-samples 500
-python train.py --model conv --optimizer adam --learning-rate 0.001 --epochs 1 --max-train-samples 2000 --max-validation-samples 500
-python train.py --model vit --optimizer adam --learning-rate 0.001 --epochs 1 --max-train-samples 2000 --max-validation-samples 500
+python train.py --model conv --num-layers 2 --optimizer adam --learning-rate 0.001 --epochs 1 --max-train-samples 2000 --max-validation-samples 500
+python train.py --model vit --num-layers 2 --optimizer adam --learning-rate 0.001 --epochs 1 --max-train-samples 2000 --max-validation-samples 500
 ```
 
 The `--max-*-samples` flags are intended for quick local checks. Do not add
@@ -49,16 +49,19 @@ them when producing the final experiment results.
 
 ## Run the comparison
 
-`experiments.json` contains the required one-variable-at-a-time comparisons
-and the four-model comparison. You may add experiments, but do not remove or
-rename the provided experiment IDs.
+`experiments.json` contains one linear baseline, one three-layer baseline, and
+one-variable-at-a-time comparisons for CNN and ViT. These comparisons vary
+epochs, batch size, learning rate, optimizer, and number of layers. For CNN,
+`num_layers` means convolutional layers; for ViT, it means Transformer encoder
+layers. The required values are 2 and 5. You may add experiments, but do not
+remove or rename the provided experiment IDs.
 
 ```bash
 python run_experiments.py --config experiments.json --output results.csv
 ```
 
 Each CSV row records one epoch. Do not edit generated measurements by hand.
-Complete the five questions in `analysis.md` after the run. CIFAR-10's official
+Complete the questions in `analysis.md` after the run. CIFAR-10's official
 test split is called the validation set in this assignment because it is used
 for model comparison; do not interpret these results as an untouched final
 test estimate.

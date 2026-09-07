@@ -10,7 +10,7 @@ Before submitting, verify all of the following:
 - [ ] `experiments.json` still contains all required experiment IDs.
 - [ ] The full experiments were run without the `--max-*-samples` flags.
 - [ ] The generated `results.csv` is committed and pushed.
-- [ ] All five questions in `analysis.md` are answered.
+- [ ] All six questions in `analysis.md` are answered.
 - [ ] The `data/` directory and model checkpoints were not committed.
 - [ ] Gradescope is linked to the correct private repository and commit/branch.
 

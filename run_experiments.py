@@ -10,7 +10,7 @@ from pathlib import Path
 
 
 FIELDS = ["experiment_id", "model", "optimizer", "epoch", "epochs",
-          "batch_size", "learning_rate", "seed", "train_loss",
+          "batch_size", "learning_rate", "num_layers", "seed", "train_loss",
           "validation_accuracy", "epoch_time_seconds"]
 
 
@@ -33,6 +33,10 @@ def main():
             missing = required - item.keys()
             if missing:
                 raise ValueError(f"Experiment is missing fields: {sorted(missing)}")
+            if item["model"] in {"conv", "vit"} and item.get("num_layers") not in {2, 5}:
+                raise ValueError(
+                    f"{item['id']} must set num_layers to either 2 or 5"
+                )
             result_path = Path(temp_dir) / f"result_{index}.csv"
             command = [sys.executable, "train.py", "--data-dir", args.data_dir,
                        "--experiment-id", str(item["id"]), "--model", str(item["model"]),
@@ -40,6 +44,8 @@ def main():
                        "--learning-rate", str(item["learning_rate"]),
                        "--optimizer", str(item["optimizer"]), "--seed", str(item["seed"]),
                        "--output", str(result_path)]
+            if item.get("num_layers") is not None:
+                command += ["--num-layers", str(item["num_layers"])]
             if args.max_train_samples:
                 command += ["--max-train-samples", str(args.max_train_samples)]
             if args.max_validation_samples:
