@@ -30,6 +30,7 @@ The repository is organized as follows:
 ├── run_experiments.py               # Runs every configured experiment
 ├── results.csv                       # Generated experiment results
 ├── analysis.md                       # Your written comparison
+├── linear_vs_cnn_tutorial.ipynb      # Introductory guided notebook
 ├── requirements.txt                 # Python dependencies
 ├── tests/
 │   └── test_smoke.py                 # Public synthetic-data checks
@@ -54,6 +55,10 @@ The files have the following roles:
   `run_experiments.py`; commit the completed file because Gradescope checks it.
 - `analysis.md` contains the questions you must answer using evidence from
   `results.csv`.
+- `linear_vs_cnn_tutorial.ipynb` is a standalone introduction to loading
+  CIFAR-10, defining a single-layer classifier and a CNN, training them, and
+  comparing their accuracy. Run it before starting the assignment if you want
+  a compact review of the end-to-end workflow. It is not graded.
 - `tests/test_smoke.py` contains public, fast tests that use synthetic tensors.
   You may run them locally, but do not modify them.
 - `.github/workflows/student-checks.yml` runs the public checks automatically
