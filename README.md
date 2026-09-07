@@ -22,11 +22,9 @@ can check that the comparison is complete and internally consistent.
 
 Complete every `TODO` in:
 
-- `linear_classifier.py`: forward pass, stable cross-entropy, one training
-  step, and accuracy.
-- `models.py`: `ThreeLayerClassifier`, `ConvClassifier`, and
-  `VisionTransformerClassifier`.
-- `train.py`: `evaluate`.
+- `models.py`: `LinearClassifier`, `ThreeLayerClassifier`, `ConvClassifier`,
+  and `VisionTransformerClassifier`.
+- `train.py`: stable cross-entropy, one training step, accuracy, and `evaluate`.
 
 Follow the exact CNN architecture documented in `models.py`. All classifiers
 must return logits, not softmax probabilities. Do not use
@@ -71,7 +69,6 @@ test estimate.
 Push these files to the root of your assigned private GitHub repository:
 
 ```text
-linear_classifier.py
 models.py
 train.py
 run_experiments.py

@@ -3,7 +3,19 @@
 import torch
 from torch import nn
 
-from linear_classifier import LinearClassifier
+
+class LinearClassifier(nn.Module):
+    """A single linear layer for image classification."""
+
+    def __init__(self, input_dim: int = 3 * 32 * 32, num_classes: int = 10):
+        super().__init__()
+        self.linear = nn.Linear(input_dim, num_classes)
+
+    def forward(self, images: torch.Tensor) -> torch.Tensor:
+        """Return logits with shape [batch_size, num_classes]."""
+        # TODO 1: Flatten each image, but keep the batch dimension.
+        # TODO 2: Pass the flattened images through self.linear.
+        raise NotImplementedError
 
 
 class ThreeLayerClassifier(nn.Module):

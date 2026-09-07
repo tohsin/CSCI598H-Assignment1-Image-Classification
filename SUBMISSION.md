@@ -5,7 +5,7 @@ the private repository created for you in the course GitHub organization.
 
 Before submitting, verify all of the following:
 
-- [ ] Every `TODO` in `linear_classifier.py`, `models.py`, and `train.py` is complete.
+- [ ] Every `TODO` in `models.py` and `train.py` is complete.
 - [ ] The GitHub Actions **Student checks** workflow passes on the submitted commit.
 - [ ] `experiments.json` still contains all required experiment IDs.
 - [ ] The full experiments were run without the `--max-*-samples` flags.
@@ -18,7 +18,7 @@ Useful commands:
 
 ```bash
 git status
-git add linear_classifier.py models.py train.py run_experiments.py \
+git add models.py train.py run_experiments.py \
   experiments.json results.csv analysis.md
 git commit -m "Complete CIFAR-10 classifier assignment"
 git push

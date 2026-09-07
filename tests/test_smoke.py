@@ -5,7 +5,6 @@ import unittest
 import torch
 from torch import nn
 
-from linear_classifier import compute_accuracy, softmax_cross_entropy
 from models import (
     ConvClassifier,
     LinearClassifier,
@@ -13,7 +12,7 @@ from models import (
     VisionTransformerClassifier,
     build_model,
 )
-from train import build_optimizer
+from train import build_optimizer, compute_accuracy, softmax_cross_entropy
 
 
 class PublicSmokeTests(unittest.TestCase):

@@ -1,4 +1,4 @@
-"""Train one of three classifiers on CIFAR-10 and optionally write CSV."""
+"""Train one of four classifiers on CIFAR-10 and optionally write CSV."""
 
 import argparse
 import csv
@@ -6,16 +6,42 @@ import time
 from pathlib import Path
 
 import torch
+from torch import nn
 from torch.utils.data import DataLoader, Subset
 from torchvision import datasets, transforms
 
-from linear_classifier import compute_accuracy, train_one_step
 from models import build_model
 
 
 RESULT_FIELDS = ["experiment_id", "model", "optimizer", "epoch", "epochs",
                  "batch_size", "learning_rate", "num_layers", "seed", "train_loss",
                  "validation_accuracy", "epoch_time_seconds"]
+
+
+def softmax_cross_entropy(logits: torch.Tensor, labels: torch.Tensor) -> torch.Tensor:
+    """Return mean softmax cross-entropy without using F.cross_entropy."""
+    # TODO 1: Compute log probabilities using a numerically stable method.
+    # TODO 2: Select the log probability of each correct class.
+    # TODO 3: Return the mean negative log probability.
+    raise NotImplementedError
+
+
+def train_one_step(
+    model: nn.Module,
+    images: torch.Tensor,
+    labels: torch.Tensor,
+    optimizer: torch.optim.Optimizer,
+) -> float:
+    """Run one training step and return the loss as a Python float."""
+    # TODO: Set gradients to zero, compute logits and loss, backpropagate,
+    # update the parameters, and return the loss as a Python float.
+    raise NotImplementedError
+
+
+def compute_accuracy(logits: torch.Tensor, labels: torch.Tensor) -> float:
+    """Return the fraction of correct predictions as a Python float."""
+    # TODO: Choose the class with the largest logit and compute accuracy.
+    raise NotImplementedError
 
 
 def evaluate(model, data_loader, device):
