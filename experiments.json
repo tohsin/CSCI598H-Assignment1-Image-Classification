@@ -1,0 +1,11 @@
+{
+  "experiments": [
+    {"id":"linear_baseline","model":"linear","epochs":10,"batch_size":128,"learning_rate":0.01,"optimizer":"sgd","seed":598},
+    {"id":"linear_epochs_5","model":"linear","epochs":5,"batch_size":128,"learning_rate":0.01,"optimizer":"sgd","seed":598},
+    {"id":"linear_batch_64","model":"linear","epochs":10,"batch_size":64,"learning_rate":0.01,"optimizer":"sgd","seed":598},
+    {"id":"linear_lr_001","model":"linear","epochs":10,"batch_size":128,"learning_rate":0.001,"optimizer":"sgd","seed":598},
+    {"id":"linear_adam","model":"linear","epochs":10,"batch_size":128,"learning_rate":0.01,"optimizer":"adam","seed":598},
+    {"id":"three_layer","model":"three_layer","epochs":10,"batch_size":128,"learning_rate":0.001,"optimizer":"adam","seed":598},
+    {"id":"conv","model":"conv","epochs":10,"batch_size":128,"learning_rate":0.001,"optimizer":"adam","seed":598}
+  ]
+}

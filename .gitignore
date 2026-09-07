@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.venv/
+venv/
+
+# Datasets and large training artifacts
+data/
+checkpoints/
+*.pt
+*.pth
+*.ckpt
+
+# Editors and operating systems
+.DS_Store
+.idea/
+.vscode/
+
+# Temporary experiment output (the final results.csv must be committed)
+results/*.csv
+*.tmp
